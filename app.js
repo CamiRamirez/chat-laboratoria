@@ -39,3 +39,27 @@ function login(){
     console.log("Error de firebase, mensaje >"+error.message);
   });
 }
+
+function logOut(){
+  firebase.auth().signOut()
+  .then(()=>{
+    console.log("Chao");
+  })
+  .catch();
+}
+
+function loginFacebook(){
+  const provider = new firebase.auth.FacebookAuthProvider();
+  //provider.addScope("user_birthday"); tienen que pedirle permiso a facebook
+  provider.setCustomParameters({
+    'display': 'popup'
+  });
+  firebase.auth().signInWithPopup(provider)
+  .then(()=>{
+    console.log("Login con Facebook");
+  })
+  .catch((error)=>{
+    console.log("Error de firebase >" +error.code);
+    console.log("Error de firebase, mensaje >" +error.message);
+  })
+}

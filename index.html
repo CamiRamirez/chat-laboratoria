@@ -13,13 +13,16 @@
   <h1>Chat Laboratoria</h1>
   <div id="loginContainer">
     <div id="loggedIn">
-      <p id="username"></p> <input id="logOutButton" type="button" value="LOG OUT">
+      <p id="username"></p> 
+      <input id="logOutButton" onclick="logOut()" type="button" value="LOG OUT">
     </div>
     <div id="loggedOut">
       <input type="email" id="email">
       <input type="password" id="password">
       <input id="loginInButton" onclick="register()" type="button" value="REGISTER">
       <input id="login" onclick="login()" type="button" value="LOGIN">
+      <input id="loginFacebook" type="button" onclick="loginFacebook()" value="LOGIN FACEBOOK">
+
     </div>
 
   </div>
