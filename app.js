@@ -1,80 +1,93 @@
 window.onload = () => {
-  firebase.auth().onAuthStateChanged((user)=>{
-    if(user){
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
       //Si estamos logueados
-      loggedOut.style.display="none";
-      loggedIn.style.display="block";
-      console.log("User >"+ JSON.stringify(user));
-    } else{
+      loggedOut.style.display = "none";
+      loggedIn.style.display = "block";
+      console.log("User >" + JSON.stringify(user));
+    } else {
       //No estamos logueados
-      loggedOut.style.display="block";
-      loggedIn.style.display="none";
+      loggedOut.style.display = "block";
+      loggedIn.style.display = "none";
     }
   });
-}
 
-function register (){
+//Acá comenzamos a escuchar por nuevos mensajes usando el evento
+    //on child_added
+    firebase.database().ref('messages')
+        .on('child_added', (newMessage)=>{
+            messageContainer.innerHTML += `
+                <p>${newMessage.val().creatorName} dice:</p>
+                <p>${newMessage.val().text}</p>
+            `;
+        });
+};
+
+function register() {
   const emailValue = email.value;
   const passwordValue = password.value;
 
   firebase.auth().createUserWithEmailAndPassword(emailValue, passwordValue)
-  .then(()=>{
-    console.log("Usuario registrado");
-  })
-  .catch((error)=>{
-    console.log("Error de firebase >"+error.code);
-    console.log("Error de firebase, mensaje >"+error.message)
-  });
+    .then(() => {
+      console.log("Usuario registrado");
+    })
+    .catch((error) => {
+      console.log("Error de firebase >" + error.code);
+      console.log("Error de firebase, mensaje >" + error.message)
+    });
 }
 
-function login(){
+function login() {
   const emailValue = email.value;
   const passwordValue = password.value;
   firebase.auth().signInWithEmailAndPassword(emailValue, passwordValue)
-  .then(()=>{
-    console.log("Usuario con login exitoso")
-  })
-  .catch((error)=>{
-    console.log("Error de firebase >"+error.code);
-    console.log("Error de firebase, mensaje >"+error.message);
-  });
+    .then(() => {
+      console.log("Usuario con login exitoso")
+    })
+    .catch((error) => {
+      console.log("Error de firebase >" + error.code);
+      console.log("Error de firebase, mensaje >" + error.message);
+    });
 }
 
-function logOut(){
+function logOut() {
   firebase.auth().signOut()
-  .then(()=>{
-    console.log("Chao");
-  })
-  .catch();
+    .then(() => {
+      console.log("Chao");
+    })
+    .catch();
 }
 
-function loginFacebook(){
+function loginFacebook() {
   const provider = new firebase.auth.FacebookAuthProvider();
   //provider.addScope("user_birthday"); tienen que pedirle permiso a facebook
   provider.setCustomParameters({
     'display': 'popup'
   });
   firebase.auth().signInWithPopup(provider)
-  .then(()=>{
-    console.log("Login con Facebook");
-  })
-  .catch((error)=>{
-    console.log("Error de firebase >" +error.code);
-    console.log("Error de firebase, mensaje >" +error.message);
-  })
+    .then(() => {
+      console.log("Login con Facebook");
+    })
+    .catch((error) => {
+      console.log("Error de firebase >" + error.code);
+      console.log("Error de firebase, mensaje >" + error.message);
+    })
 }
 
-//Firebase Database
-function sendMessage () {
+
+
+// Firebase Database
+// Usaremos una colección para guardar los mensajes, llamada messages
+function sendMessage(){
   const currentUser = firebase.auth().currentUser;
   const messageAreaText = messageArea.value;
 
-  //para tener una nueva llave en la coleccion mensajes
+  //Para tener una nueva llave en la colección messages
   const newMessageKey = firebase.database().ref().child('messages').push().key;
 
   firebase.database().ref(`messages/${newMessageKey}`).set({
-    creator : currentUSer.uid,
-    creatorName : currentUser.displayName,
-    text : messageAreaText
+      creator : currentUser.uid,
+      creatorName : currentUser.displayName,
+      text : messageAreaText
   });
 }
